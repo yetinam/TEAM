@@ -1,0 +1,18 @@
+{
+  "data_path": "italy.hdf5",
+  "output_path": "baselines/italy",
+  "custom_split": "test_2016",
+  "shuffle_train_dev": true,
+  "magnitude_key": "Magnitude",
+  "data_keys": ["pga_times", "coords", "waveforms", "p_picks", "stations"],
+  "training_keys": ["coords", "pga", "stations"],
+  "training_parts": [true, true, false],
+  "methods": [
+    "true_point_source",
+    "estimated_point_source",
+    "plum"],
+  "method_args": [
+    {"region": "italy", "alpha": [0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95]},
+    {"region": "italy", "min_window": 2, "length_weight": true, "pd_length": 6, "alpha": [0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95]},
+    {"radius": 15, "alpha": [0.5]}]
+}

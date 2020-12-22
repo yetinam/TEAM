@@ -1,0 +1,134 @@
+{
+    "seed": 42,
+    "model": "transformer",
+    "ensemble": 10,
+    "model_params": {
+        "waveform_model_dims": [
+            500,
+            500,
+            500
+        ],
+        "output_mlp_dims": [
+            150,
+            100,
+            50,
+            30,
+            10
+        ],
+        "output_location_dims": [
+            150,
+            100,
+            50,
+            50,
+            50
+        ],
+        "wavelength": [
+            [
+                0.01,
+                15
+            ],
+            [
+                0.01,
+                15
+            ],
+            [
+                0.01,
+                10
+            ]
+        ],
+        "mad_params": {
+            "n_heads": 10,
+            "att_dropout": 0.0,
+            "initializer_range": 0.02
+        },
+        "ffn_params": {
+            "hidden_dim": 1000
+        },
+        "transformer_layers": 6,
+        "hidden_dropout": 0.0,
+        "activation": "relu",
+        "n_pga_targets": 4,
+        "location_mixture": 15,
+        "pga_mixture": 5,
+        "magnitude_mixture": 5,
+        "borehole": false,
+        "max_stations": 25,
+        "bias_mag_mu": 3.5,
+        "bias_mag_sigma": 0.5,
+        "bias_loc_mu": 0,
+        "bias_loc_sigma": 2,
+        "event_token_init_range": 0.02,
+        "no_event_token": true,
+        "rotation_anchor": [42, 0]
+    },
+    "training_params": {
+        "lr": 0.00001,
+        "clipnorm": 1.0,
+        "epochs_single_station": 25,
+        "epochs_full_model": 20,
+        "filter_single_station_by_pick": true,
+        "transfer_model_path": "weights_transformer_joint_rotation_ensemble",
+        "data_path": [
+            "italy.hdf5",
+            "auxilary.hdf5"
+        ],
+        "workers": 10,
+        "weight_path": "weights_transformer_italy_rotation_transfer_ensemble",
+        "ensemble_load": true,
+        "wait_for_load": true,
+        "loss_weights": {
+            "pga": 1
+        },
+        "ensemble_rotation": true,
+        "generator_params": [
+            {
+                "key": "Magnitude",
+                "batch_size": 64,
+                "min_upsample_magnitude": 4,
+                "magnitude_resampling": 1.5,
+                "translate": false,
+                "disable_station_foreshadowing": true,
+                "selection_skew": 1000,
+                "pga_from_inactive": true,
+                "pga_key": "pga",
+                "shuffle_train_dev": true,
+                "trigger_based": true,
+                "scale_metadata": false,
+                "custom_split": "test_2016",
+                "upsample_high_station_events": 10,
+                "transform_target_only": false,
+                "pga_selection_skew": 1000,
+                "cutout_start": -1,
+                "cutout_end": 25,
+                "pos_offset": [
+                    0,
+                    12
+                ]
+            },
+            {
+                "key": "M_J",
+                "batch_size": 16,
+                "min_upsample_magnitude": 4.5,
+                "magnitude_resampling": 1.5,
+                "oversample": 2,
+                "translate": false,
+                "disable_station_foreshadowing": true,
+                "selection_skew": 1000,
+                "pga_from_inactive": true,
+                "pga_key": "pga",
+                "shuffle_train_dev": false,
+                "trigger_based": true,
+                "scale_metadata": false,
+                "custom_split": "no_test",
+                "transform_target_only": false,
+                "pga_selection_skew": 1000,
+                "cutout_start": -1,
+                "cutout_end": 25,
+                "pos_offset": [
+                    0,
+                    12
+                ]
+            }
+        ]
+    }
+}
