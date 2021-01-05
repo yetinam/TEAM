@@ -1,0 +1,80 @@
+{
+    "seed": 42,
+    "model": "transformer",
+    "model_params": {
+        "waveform_model_dims": [
+            500,
+            500,
+            500
+        ],
+        "output_mlp_dims": [
+            150,
+            100,
+            50,
+            30,
+            10
+        ],
+        "output_location_dims": [
+            150,
+            100,
+            50,
+            50,
+            50
+        ],
+        "wavelength": [
+            [
+                0.01,
+                15
+            ],
+            [
+                0.01,
+                15
+            ],
+            [
+                0.01,
+                10
+            ]
+        ],
+        "mad_params": {
+            "n_heads": 10,
+            "att_dropout": 0.0,
+            "initializer_range": 0.02
+        },
+        "ffn_params": {
+            "hidden_dim": 1000
+        },
+        "transformer_layers": 6,
+        "hidden_dropout": 0.0,
+        "activation": "relu",
+        "location_mixture": 15,
+        "magnitude_mixture": 5,
+        "borehole": false,
+        "max_stations": 25,
+        "bias_loc_mu": 0,
+        "bias_loc_sigma": 2,
+        "event_token_init_range": 0.02,
+        "skip_transformer": true
+    },
+    "training_params": {
+        "lr": 0.0001,
+        "batch_size": 64,
+        "clipnorm": 1.0,
+        "epochs_single_station": 25,
+        "epochs_full_model": 100,
+        "cutout_start": -4,
+        "cutout_end": 25,
+        "single_station_model_path": "weights_chile_mag/single-station-25.hdf5",
+        "data_path": "chile.hdf5",
+        "workers": 10,
+        "weight_path": "weights_chile_mag_nomag_pooling",
+        "key": "MA",
+        "min_upsample_magnitude": 4,
+        "magnitude_resampling": 2,
+        "loss_weights": {
+            "magnitude": 0,
+            "location": 1
+        },
+        "translate": false,
+        "scale_metadata": false
+    }
+}

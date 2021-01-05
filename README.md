@@ -1,4 +1,5 @@
 # The Transformer earthquake alerting model (TEAM)
+Implementation for early warning (TEAM) and for location and magnitude estimation (TEAM-LM)
 
 ## Installation
 
@@ -10,7 +11,7 @@ If required, GPU support needs to be installed manually.
 ## Training
 
 Model and training configurations are defined in json-files.
-Please consult the folder `pga_configs` for example configurations.
+Please consult the folders `magloc_configs` and `pga_configs` for example configurations.
 
 To start model training use:
 ```
@@ -20,11 +21,11 @@ python train.py --config [CONFIG].json
 To test a config by running a model with only few data points, the command line flag `--test_run` can be used.
 
 The training saves model weights to the given weight path.
-In addition it writes logs for tensorboard to `/logs/scalars`.
+In addition, it writes logs for tensorboard to `/logs/scalars`.
 
 ## Citation
 
-When using TEAM please reference the associated publication.
+When using TEAM or TEAM-ML please reference the associated publications:
 ```
 @article{munchmeyer2020team,
   title={The transformer earthquake alerting model: A new versatile approach to earthquake early warning},
@@ -33,12 +34,18 @@ When using TEAM please reference the associated publication.
   year={2020},
   doi={10.1093/gji/ggaa609}
 }
+
+@article{munchmeyer2021teamlm,
+  title={Earthquake magnitude and location estimation from real time seismic waveforms with a transformer network},
+  author={M{\"u}nchmeyer, Jannes and Bindi, Dino and Leser, Ulf and Tilmann, Frederik},
+  year={2021}
+}
 ```
 
 ## Config options
 
 The configurations are split into model and training parameters.
-Furthermore there are three global parameters, the random seed `seed`, the model type, which currently needs to be set to `transformer`, and `ensemble`, the size of the ensemble.
+Furthermore, there are three global parameters, the random seed `seed`, the model type, which currently needs to be set to `transformer`, and `ensemble`, the size of the ensemble.
 By default, no ensemble but a single model is trained.
 Note that not all parameter combinations are possible for both theoretical and implementation restrictions, and might lead to crashes.
 
@@ -165,6 +172,7 @@ The predictions are a pickle file containg a list consisting of:
 ## Datasets
 
 The dataset for Italy is available at [10.5880/GFZ.2.4.2020.004](https://doi.org/10.5880/GFZ.2.4.2020.004).
+The dataset for Chile will shortly be published.
 To obtain the dataset for Japan, please run the following commands.
 Obtaining the data requires an account with [NIED](https://www.kyoshin.bosai.go.jp/).
 The download script will prompt for you login credentials.
@@ -182,5 +190,5 @@ Use `python japan.py --action merge_hdf5 --input [PATH OF ALL SHARDS] --output [
 
 ## Baselines
 
-Baseline implementations for early warning are contained in `pga_baselines.py`.
-For reference on the usage please see the samples configs in `pga_baseline_configs` and the implementation.
+Baseline implementations for magnitude estimation and early warning are contained in `mag_baselines.py` and `pga_baselines.py`.
+For reference on the usage please see the samples configs in `mag_baseline_configs` and `pga_baseline_configs` and the implementation.

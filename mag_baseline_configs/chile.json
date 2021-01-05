@@ -1,0 +1,8 @@
+{
+  "data_path": "chile.hdf5",
+  "output_path": "mag_baselines/chile",
+  "magnitude_key": "M_A",
+  "data_keys": ["coords", "waveforms", "p_picks"],
+  "methods": ["KuyukAllen"],
+  "method_args": [{"min_window": 2, "length_weight": true, "pd_length": 6, "velocity": true}]
+}

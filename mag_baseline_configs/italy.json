@@ -1,0 +1,10 @@
+{
+  "data_path": "italy.hdf5",
+  "output_path": "mag_baselines/italy",
+  "custom_split": "test_2016",
+  "shuffle_train_dev": true,
+  "magnitude_key": "Magnitude",
+  "data_keys": ["coords", "waveforms", "p_picks"],
+  "methods": ["KuyukAllen"],
+  "method_args": [{"offset": "italy", "min_window": 2, "length_weight": true, "pd_length": 6}]
+}
