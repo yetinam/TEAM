@@ -196,7 +196,7 @@ The predictions are a pickle file containg a list consisting of:
 ## Datasets
 
 The dataset for Italy is available at [10.5880/GFZ.2.4.2020.004](https://doi.org/10.5880/GFZ.2.4.2020.004).
-The dataset for Chile will shortly be published.
+The dataset for Chile is available at [10.5880/GFZ.2.4.2021.002](https://doi.org/10.5880/GFZ.2.4.2021.002).
 To obtain the dataset for Japan, please run the following commands.
 Obtaining the data requires an account with [NIED](https://www.kyoshin.bosai.go.jp/).
 The download script will prompt for you login credentials.
