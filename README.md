@@ -1,5 +1,13 @@
 # The Transformer earthquake alerting model (TEAM)
-Implementation for early warning (TEAM) and for location and magnitude estimation (TEAM-LM)
+The Transformer Earthquake Alerting Model is a deep learning model for real time estimation of peak ground acceleration (TEAM), earthquake magnitude and earthquake location (TEAM-LM).
+This software package contains the joint implementation of both TEAM and the derivative TEAM-ML, as well as the scripts for training and evaluating these models.
+In addition, it contains scripts to download an early warning datasets for Japan and implementations of baseline approaches for the estimation of earthquake magnitude and peak ground acceleration.
+TEAM is implemented in Python.
+
+TEAM and TEAM-ML have a variety of configuration parameters that are documented below.
+These configurations need to be provided in JSON format.
+In addition, multiple example configuration files are provided in the subdirectories pga_configs and magloc_configs.
+Please note that this implementation is intended for research purpose only. Production use is discouraged.
 
 ## Installation
 
@@ -25,7 +33,22 @@ In addition, it writes logs for tensorboard to `/logs/scalars`.
 
 ## Citation
 
-When using TEAM or TEAM-ML please reference the associated publications:
+When using the implementation of TEAM or TEAM-ML please reference the associated software publications:
+
+```
+@misc{munchmeyer2021softwareteam,
+  doi = {10.5880/GFZ.2.4.2021.003},
+  author = {M\"{u}nchmeyer,  Jannes and Bindi,  Dino and Leser,  Ulf and Tilmann,  Frederik},
+  title = {TEAM – The transformer earthquake alerting model},
+  publisher = {GFZ Data Services},
+  year = {2021},
+  note = {V. 1.0},
+  copyright = {GPLv3}
+}
+```
+
+Please also consider referencing the relevant key publications:
+
 ```
 @article{munchmeyer2020team,
   title={The transformer earthquake alerting model: A new versatile approach to earthquake early warning},
