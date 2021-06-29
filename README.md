@@ -139,8 +139,9 @@ Parameter | Default value | Description
 ---- | ---- | ----
 key | - | Key of the magnitude value in the event metadata
 batch_size | 32 | Size of training batches
-cutout_start, cutout_end | None | Start and end of the cutout in seconds relative to the end of the noise
+cutout_start, cutout_end | None | Start and end of the possible cutout in seconds relative to the end of the noise. The cutout always indicates the end ot the available data.
 noise_seconds | 5 | Number of seconds with noise. Only used for expressing cutout boundaries in terms of noise and for times in evaluation.
+sliding window | False | If true, instead of using zero-padding for real time processing, uses a sliding window, i.e., randomly selects a window accoring to the given cutout. Note that this usually will require training data with more input samples.
 shuffle | True | Shuffle order of events
 coords_target | True | Return target coordinates as outputs
 oversample | 1 | Number of times to show each event per epoch
