@@ -139,7 +139,8 @@ Parameter | Default value | Description
 ---- | ---- | ----
 key | - | Key of the magnitude value in the event metadata
 batch_size | 32 | Size of training batches
-cutout | None | Value range for temporal blinding given as a tuple of sample idices
+cutout_start, cutout_end | None | Start and end of the cutout in seconds relative to the end of the noise
+noise_seconds | 5 | Number of seconds with noise. Only used for expressing cutout boundaries in terms of noise and for times in evaluation.
 shuffle | True | Shuffle order of events
 coords_target | True | Return target coordinates as outputs
 oversample | 1 | Number of times to show each event per epoch

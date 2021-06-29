@@ -30,12 +30,15 @@ def resample_trace(trace, sampling_rate):
 
 if keras is not None:
     class DataGenerator(keras.utils.Sequence):
-        def __init__(self, X, y, batch_size=32, cutout=None, shuffle=True, label_smoothing=False, oversample=1):
+        def __init__(self, X, y, batch_size=32, cutout=None, sliding_window=False, windowlen=3000,
+                     shuffle=True, label_smoothing=False, oversample=1):
             self.batch_size = batch_size
             self.y = y
             self.dist = None
             self.X = X
             self.cutout = cutout
+            self.sliding_window = sliding_window  # If true, selects sliding windows instead of cutout. Uses cutout as values for end of window.
+            self.windowlen = windowlen  # Length of window for sliding window
             assert self.X.shape[0] == self.y.shape[0]
             self.shuffle = shuffle
             self.oversample = oversample
@@ -55,7 +58,12 @@ if keras is not None:
             y = self.y[indexes]
 
             if self.cutout:
-                X[:, np.random.randint(*self.cutout):] = 0
+                if self.sliding_window:
+                    windowlen = self.windowlen
+                    window_end = np.random.randint(max(windowlen, self.cutout[0]), min(X.shape[1], self.cutout[1]) + 1)
+                    X = X[:, window_end - windowlen : window_end]
+                else:
+                    X[:, np.random.randint(*self.cutout):] = 0
 
             if self.label_smoothing:
                 y += (y > 4) * np.random.randn(y.shape[0]).reshape(y.shape) * (y - 4) * 0.05
@@ -69,7 +77,8 @@ if keras is not None:
 
 
     class PreloadedEventGenerator(keras.utils.Sequence):
-        def __init__(self, data, event_metadata, key='MA', batch_size=32, cutout=None, shuffle=True,
+        def __init__(self, data, event_metadata, key='MA', batch_size=32, cutout=None,
+                     sliding_window=False, windowlen=3000, shuffle=True,
                      coords_target=True, oversample=1, pos_offset=(-21, -69),
                      label_smoothing=False, station_blinding=False, magnitude_resampling=3,
                      pga_targets=None, adjust_mean=True, transform_target_only=False,
@@ -93,6 +102,8 @@ if keras is not None:
                 self.pga = [np.zeros(x.shape[0]) for x in self.waveforms]
             self.key = key
             self.cutout = cutout
+            self.sliding_window = sliding_window  # If true, selects sliding windows instead of cutout. Uses cutout as values for end of window.
+            self.windowlen = windowlen  # Length of window for sliding window
             self.coords_target = coords_target
             self.oversample = oversample
             self.pos_offset = pos_offset
@@ -191,9 +202,9 @@ if keras is not None:
             for i, idx in enumerate(indexes):
                 if len(self.waveforms[idx]) <= self.max_stations:
                     waveforms[i, :len(self.waveforms[idx])] = self.waveforms[idx]
-                    metadata[i, :len(self.waveforms[idx])] = self.metadata[idx]
-                    pga[i, :len(self.waveforms[idx])] = self.pga[idx]
-                    p_picks[i, :len(self.waveforms[idx])] = self.triggers[idx]
+                    metadata[i, :len(self.metadata[idx])] = self.metadata[idx]
+                    pga[i, :len(self.pga[idx])] = self.pga[idx]
+                    p_picks[i, :len(self.triggers[idx])] = self.triggers[idx]
                     reverse_selections += [[]]
                 else:
                     if self.selection_skew is None:
@@ -231,17 +242,27 @@ if keras is not None:
             if self.coords_target:
                 target = self.event_metadata.iloc[indexes][self.coord_keys].values
 
+            org_waveform_length = waveforms.shape[2]
             if self.cutout:
-                cutout = np.random.randint(*self.cutout)
-                if self.adjust_mean:
-                    waveforms -= np.mean(waveforms[:, :, :cutout+1], axis=2, keepdims=True)
-                waveforms[:, :, cutout:] = 0
+                if self.sliding_window:
+                    windowlen = self.windowlen
+                    window_end = np.random.randint(max(windowlen, self.cutout[0]), min(waveforms.shape[2], self.cutout[1]) + 1)
+                    waveforms = waveforms[:, :, window_end - windowlen: window_end]
+
+                    cutout = window_end
+                    if self.adjust_mean:
+                        waveforms -= np.mean(waveforms, axis=2, keepdims=True)
+                else:
+                    cutout = np.random.randint(*self.cutout)
+                    if self.adjust_mean:
+                        waveforms -= np.mean(waveforms[:, :, :cutout+1], axis=2, keepdims=True)
+                    waveforms[:, :, cutout:] = 0
             else:
                 cutout = waveforms.shape[2]
 
             if self.trigger_based:
                 # Remove waveforms for all stations that did not trigger yet to avoid knowledge leakage
-                p_picks[p_picks <= 0] = waveforms.shape[2]  # Ensure that stations without P picks do not show data
+                p_picks[p_picks <= 0] = org_waveform_length  # Ensure that stations without P picks do not show data
                 waveforms[cutout < p_picks, :, :] = 0
 
             if self.integrate:
@@ -620,14 +641,16 @@ def normalize_gain(stream, inv, key='ACC'):
 
 
 def generator_from_config(config, data, event_metadata, time, batch_size=64, sampling_rate=100, pga=False, dataset_id=None):
-    cutout = int(sampling_rate * (time + 5))
-    cutout = (cutout, cutout + 1)
     training_params = config['training_params']
 
     if dataset_id is not None:
         generator_params = training_params.get('generator_params', [training_params.copy()])[dataset_id]
     else:
         generator_params = training_params.get('generator_params', [training_params.copy()])[0]
+
+    noise_seconds = generator_params[0].get('noise_seconds', 5)
+    cutout = int(sampling_rate * (noise_seconds + 5))
+    cutout = (cutout, cutout + 1)
 
     n_pga_targets = config['model_params'].get('n_pga_targets', 0)
     max_stations = config['model_params']['max_stations']

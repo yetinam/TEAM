@@ -242,14 +242,18 @@ if __name__ == '__main__':
             x_dev = x_dev[dev_mask]
             y_dev = y_dev[dev_mask]
 
+            noise_seconds = generator_params[0].get('noise_seconds', 5)
             cutout = (
-                sampling_rate * (5 + generator_params[0]['cutout_start']), sampling_rate * (5 + generator_params[0]['cutout_end']))
+                sampling_rate * (noise_seconds + generator_params[0]['cutout_start']), sampling_rate * (noise_seconds + generator_params[0]['cutout_end']))
+
+            sliding_window = generator_params[0].get('sliding_window', False)
 
             train_generator = util.DataGenerator(x_train, np.expand_dims(np.expand_dims(y_train, axis=1), axis=2),
                                                  batch_size=generator_params[0]['batch_size'], cutout=cutout,
-                                                 label_smoothing=True)
+                                                 label_smoothing=True, sliding_window=sliding_window)
             validation_generator = util.DataGenerator(x_dev, np.expand_dims(np.expand_dims(y_dev, axis=1), axis=2),
-                                                      batch_size=generator_params[0]['batch_size'], cutout=cutout, oversample=3)
+                                                      batch_size=generator_params[0]['batch_size'], cutout=cutout, oversample=3,
+                                                      sliding_window=sliding_window)
 
             # Only save weights due to open issue:
             # https://github.com/matterport/Mask_RCNN/issues/308
@@ -314,8 +318,9 @@ if __name__ == '__main__':
         validation_generators = []
 
         for i, generator_param_set in enumerate(generator_params):
+            noise_seconds = generator_param_set.get('noise_seconds', 5)
             cutout = (
-                sampling_rate * (5 + generator_param_set['cutout_start']), sampling_rate * (5 + generator_param_set['cutout_end']))
+                sampling_rate * (noise_seconds + generator_param_set['cutout_start']), sampling_rate * (noise_seconds + generator_param_set['cutout_end']))
 
             generator_param_set['transform_target_only'] = generator_param_set.get('transform_target_only', True)
 
