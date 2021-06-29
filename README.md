@@ -61,8 +61,9 @@ Please also consider referencing the relevant key publications:
 @article{munchmeyer2021teamlm,
   title={Earthquake magnitude and location estimation from real time seismic waveforms with a transformer network},
   author={M{\"u}nchmeyer, Jannes and Bindi, Dino and Leser, Ulf and Tilmann, Frederik},
-  journal={arXiv preprint arXiv:2101.02010},
-  year={2021}
+  journal={Geophysical Journal International},
+  year={2021},
+  doi={10.1093/gji/ggab139}
 }
 ```
 
