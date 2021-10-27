@@ -20,8 +20,7 @@ RUN echo '%staff   ALL=(ALL:ALL) ALL' >> /etc/sudoers;
 # Install python packages in requirements.txt
 COPY requirements.txt /tmp/
 RUN python -m pip install --upgrade pip; \
-    python -m pip install shapely --no-binary shapely; \
-    python -m pip --no-cache-dir install --upgrade --requirement /tmp/requirements.txt;
+    python -m pip --no-cache-dir install --requirement /tmp/requirements.txt;
 
 
 # Fix X11 forwarding request failed on channel 0
